@@ -1,0 +1,6 @@
+*
+!.gitignore
+!*.yaml
+!*.json
+*.local.json
+*.local.yaml

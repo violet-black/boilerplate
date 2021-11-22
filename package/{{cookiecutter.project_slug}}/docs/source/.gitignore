@@ -1,0 +1,11 @@
+*
+!.gitignore
+!index.rst
+!developer_guide.rst
+!license.rst
+!api.rst
+!changes.rst
+!readme.rst
+!conf.py
+!_templates
+!_static

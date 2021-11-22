@@ -1,0 +1,5 @@
+curl
+#py3-bcrypt
+#py3-cryptography
+libuv
+libstdc++

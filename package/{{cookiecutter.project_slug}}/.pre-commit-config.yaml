@@ -1,0 +1,153 @@
+# fail_fast: true
+repos:
+
+  # common file formatters
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+      - id: check-case-conflict
+      - id: check-json
+      - id: check-toml
+      - id: check-yaml
+      - id: check-executables-have-shebangs
+      - id: check-merge-conflict
+      - id: double-quote-string-fixer
+      - id: end-of-file-fixer
+      - id: fix-byte-order-marker
+      - id: mixed-line-ending
+      - id: debug-statements
+      - id: check-added-large-files
+      - id: check-symlinks
+      - id: trailing-whitespace
+  - repo: local
+    hooks:
+
+      # pre-formatting
+
+      - id: isort
+        name: sorting imports
+        description: https://github.com/PyCQA/isort
+        entry: isort
+        args: [ '--filter-files' ]
+        language: python
+        language_version: python3
+        types: [ python ]
+        exclude: (conftest.py|setup.py|docs/source/conf.py|.*__init__.py|.*__main__.py)
+        require_serial: true
+      - id: pyupgrade
+        name: upgrading the code
+        description: https://github.com/asottile/pyupgrade
+        entry: pyupgrade
+        args: [ '--py{{ cookiecutter.minimum_python_version | replace(".", "") }}-plus' ]
+        language: python
+        types: [ python ]
+        exclude: (conftest.py|setup.py|docs/source/conf.py)
+      - id: black
+        name: formatting the code
+        description: https://github.com/psf/black
+        entry: black
+        args: ['-S']
+        language: python
+        types: [ python ]
+        exclude: (conftest.py|setup.py|docs/source/conf.py)
+        require_serial: true
+
+      # QA
+
+      - id: bandit
+        name: scanning for security issues
+        description: https://github.com/PyCQA/bandit
+        entry: bandit
+        args: [ '-s', 'B101,B601,B603' ]  # it seems that at this moment pyproject.toml is not supported
+        language: python
+        types: [ python ]
+        exclude: (conftest.py|setup.py|docs/source/conf.py)
+      - id: flake8
+        name: code linting
+        description: https://github.com/PyCQA/flake8
+        entry: pflake8
+        args: [ '--doctests', '--config', 'pyproject.toml']
+        language: python
+        types: [ python ]
+        exclude: (conftest.py|setup.py|docs/source/conf.py)
+        require_serial: true
+      - id: pydocstyle
+        name: docstrings linting
+        description: https://github.com/PyCQA/pydocstyle
+        entry: pydocstyle
+        args: [ '--config', 'pyproject.toml']
+        language: python
+        types: [ python ]
+        exclude: (conftest.py|setup.py|docs/source/conf.py)
+      - id: rst-lint
+        name: RST linting
+        description: https://github.com/twolfson/restructuredtext-lint
+        entry: rst-lint
+        language: system
+        types: [ rst ]
+        exclude: docs/source/
+      - id: shellcheck
+        name: shell scripts linting
+        description: https://github.com/shellcheck-py/shellcheck-py
+        entry: shellcheck
+        args: ['-e', 'SC1091', '-e', 'SC2015', '-e', 'SC2035']
+        language: python
+        types: [ shell ]
+        files: tools/
+        require_serial: true
+      - id: pyroma
+        name: setup files linting
+        description: https://github.com/regebro/pyroma
+        entry: pyroma
+        args: [ '-d', '--min=9', '.' ]
+        language: python
+        files: setup.cfg
+        pass_filenames: false
+
+      # requirements
+      # Building requirements may take a lot of time however it runs
+      # ONLY if there are setup or requirements.in files changes
+
+      - id: requirements-base
+        name: building base requirements
+        description: https://github.com/jazzband/pip-tools
+        entry: pip-compile
+        args: [ 'setup.cfg', '-q', '-o', 'requirements/base.txt' ]
+        language: system
+        files: setup.cfg
+        pass_filenames: false
+      - id: requirements-dev
+        name: building dev requirements
+        description: https://github.com/jazzband/pip-tools
+        entry: pip-compile
+        args: [ 'setup.cfg', '-q', '--extra', 'dev', '-o', 'requirements/dev.txt' ]
+        language: system
+        files: setup.cfg
+        pass_filenames: false
+
+      # Commit message hooks
+
+      - id: format-commit-msg
+        name: checking commit message
+        entry: python3
+        args: [ 'tools/format_commit_msg.py' ]
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [ commit-msg ]
+
+      # Manual hooks
+
+       # Testing may take a lot of time. The tests are expected to be run from CI
+       # before merge commits only.
+
+      - id: pytest
+        name: running tests
+        entry: pytest
+        language: system
+        types: [ python ]
+        files: tests/
+        pass_filenames: false
+        always_run: true
+        stages: [ manual ]

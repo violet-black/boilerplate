@@ -1,0 +1,131 @@
+# This file is a template, and might need editing before it works on your project.
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Python.gitlab-ci.yml
+
+# Official language image. Look for the different tagged releases at:
+# https://hub.docker.com/r/library/python/tags/
+image: python:{{ cookiecutter.minimum_python_version }}
+
+# Change pip's cache directory to be inside the project directory since we can
+# only cache local items.
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+# Pip's cache doesn't store the python packages
+# https://pip.pypa.io/en/stable/reference/pip_install/#caching
+#
+# If you want to also cache the installed packages, you have to install
+# them in a virtualenv and cache it as well.
+cache:
+  paths:
+    - .cache/pip
+    - venv/
+
+before_script:
+  - python -m venv venv
+  - source venv/bin/activate
+  - pip install --upgrade pip setuptools wheel
+  - pip install -r requirements/dev.txt
+
+# Pytest coverage for all unittest markers.
+# It requires `CODECOV_TOKEN` env variable for codecov.io.
+coverage:
+  stage: test
+  script:
+    - coverage run -m pytest
+    - coverage xml
+    - codecov --token
+  artifacts:
+    paths:
+      - coverage.xml
+  only:
+    refs:
+      - merge_requests
+    changes:
+      - {{ cookiecutter.project_slug }}/**/*.py
+      - tests/**/*.py
+
+# Pre-commit and post-commit hook checks for the repo.
+pre_commit:
+  stage: test
+  script:
+    - pre-commit install --hook-type pre-commit
+    - pre-commit run -c .pre-commit-config-ci.yaml
+  variables:
+    PRE_COMMIT_HOME: ${CI_PROJECT_DIR}/.cache/pre-commit
+  cache:
+    paths:
+      - ${PRE_COMMIT_HOME}
+  only:
+    - merge_requests
+
+# Package publish job on version tag change.
+# It requires `PYPI_API_TOKEN` env variable for this particular repository
+pypi:
+  stage: deploy
+  script:
+    - pre-commit run --hook-stage manual pytest
+    - pre-commit run --hook-stage commit pyroma
+    - pip install -U build twine wheel
+    - python -m build --wheel
+    - echo "[pypi]" >> ~/.pypirc
+    - echo "username=__token__" >> ~/.pypirc
+    - echo "password=${PYPI_API_TOKEN}" >> ~/.pypirc
+    - echo "[privatepypi]" >> ~/.pypirc
+    - echo "repository=${$PRIVATE_PYPI_ADDR}/legacy/" >> ~/.pypirc
+    - echo "username=${PRIVATE_PYPI_USERNAME}" >> ~/.pypirc
+    - echo "password=${PRIVATE_PYPI_PASSWORD}" >> ~/.pypirc
+    - twine upload dist/*
+    - twine upload -r privatepypi dist/*
+  artifacts:
+    paths:
+      - dist/*.whl
+  only:
+    refs:
+      - tags
+    variables:
+      - $PYPI_API_TOKEN
+      - $PRIVATE_PYPI_ADDR
+      - $PRIVATE_PYPI_USERNAME
+      - $PRIVATE_PYPI_PASSWORD
+
+# pushing image to CI
+build_image:
+  image: docker:stable
+  stage: deploy
+  before_script:
+    - docker info
+  script:
+    - docker image ls
+    - . tools/_lib.sh
+    - build_docker_image
+    - docker login --username "${DOCKER_REGISTRY_USERNAME}" --password "${DOCKER_REGISTRY_PASSWORD}" "${DOCKER_REGISTRY_ADDR}"
+    - docker image push --all-tags "{{ cookiecutter.vcs_username }}/{{ cookiecutter.package_name }}:latest"
+  only:
+    refs:
+      - tags
+    variables:
+      - $DOCKER_REGISTRY_ADDR
+      - $DOCKER_REGISTRY_USERNAME
+      - $DOCKER_REGISTRY_PASSWORD
+
+# Documentation builder (Sphinx)
+pages:
+  script:
+    - pip install -r requirements/docs.txt
+    - pip install sphinx
+    - cd docs
+    - make html
+    - mv build/html/ ../public/
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  only:
+    changes:
+      - README.rst
+      - docs/source/*.rst
+      - {{ cookiecutter.project_slug }}/**/*.py

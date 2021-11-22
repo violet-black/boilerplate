@@ -1,0 +1,4 @@
+build-base
+openssl
+git
+python3-dev

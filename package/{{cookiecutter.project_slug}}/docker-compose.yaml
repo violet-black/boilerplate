@@ -1,0 +1,75 @@
+#version: '3.7'
+
+## A simple compose file for local env
+## Uncomment required services
+
+#services:
+
+#  postgres:
+#    image: postgres:14
+#    container_name: {{ cookiecutter.project_slug }}__postgres
+#    environment:
+#      POSTGRES_PASSWORD: postgres
+#      POSTGRES_HOST_AUTH_METHOD: trust
+#    ports:
+#      - '5432:5432'
+#    networks:
+#      - net
+#
+#  elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.2
+#    container_name: {{ cookiecutter.project_slug }}__elasticsearch
+#    ports:
+#      - '9200:9200'
+#      - '9300:9300'
+#    environment:
+#      - 'discovery.type=single-node'
+#      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+#    networks:
+#      - net
+#
+#  kibana:
+#    image: docker.elastic.co/kibana/kibana:7.15.2
+#    container_name: {{ cookiecutter.project_slug }}__kibana
+#    ports:
+#      - '5601:5601'
+#    networks:
+#      - net
+#
+#  redis:
+#    image: eqalpha/keydb:latest
+#    container_name: {{ cookiecutter.project_slug }}__keydb
+#    ports:
+#      - '6379:6379'
+#    networks:
+#      - net
+
+#  kafka:
+#    image: johnnypark/kafka-zookeeper:latest
+#    container_name: {{ cookiecutter.project_slug }}__kafka
+#    ports:
+#      - '9092:9092'
+#      - '2181:2181'
+#    environment:
+#      ADVERTISED_HOST: '127.0.0.1'
+#      ADVERTISED_PORT: '9092'
+#    networks:
+#      - net
+#
+#  app:
+#    build:
+#      context: .
+#      target: code
+#    image: {{ cookiecutter.project_slug }}:latest
+#    container_name: {{ cookiecutter.project_slug }}
+#    environment:
+#      DEBUG: true
+#    ports:
+#      - '9000:9000'
+#    networks:
+#      - net
+#
+#networks:
+#  net:
+#    name: net
+#    driver: bridge

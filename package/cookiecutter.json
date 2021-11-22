@@ -1,0 +1,37 @@
+{
+  "type": [
+    "package",
+    "application"
+  ],
+  "minimum_python_version": "3.8",
+  "maximum_python_version": "3.10",
+  "python_versions": "{{ range(cookiecutter.minimum_python_version | replace('3.', '') | int, cookiecutter.maximum_python_version | replace('3.', '') | int  + 1) | join('_') }}",
+  "line_length": 120,
+  "project_name": "My Project",
+  "version": "0.0.0",
+  "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_') }}",
+  "package_name": "{{ cookiecutter.project_slug.replace('_', '-') }}",
+  "vcs_project_name": "{{ cookiecutter.package_name }}",
+  "vcs": [
+    "gitlab",
+    "github"
+  ],
+  "vcs_username": "gituser",
+  "codecov_username": "{{ cookiecutter.vcs_username }}",
+  "vcs_url": "https://{{ cookiecutter.vcs }}.com/{{ cookiecutter.vcs_username }}/{{ cookiecutter.vcs_project_name }}",
+  "email": "gituser@email",
+  "author": "{{ cookiecutter.email }}",
+  "project_short_description": "Project short description",
+  "license": [
+    "Apache Software License 2.0",
+    "MIT license",
+    "BSD license",
+    "ISC license",
+    "GNU General Public License v3",
+    "Not open source"
+  ],
+  "_copy_without_render": [
+    "CHANGES/.TEMPLATE.rst",
+    ".github/workflows/*"
+  ]
+}

@@ -1,0 +1,30 @@
+name: coverage
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+#    paths:
+#      - tests/**
+#      - {{ cookiecutter.project_slug }}/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3
+      - name: Install dependencies
+        run: |
+          pip install -e .[dev]
+      - name: Run tests and collect coverage
+        run: |
+          coverage run -m pytest -m unittest
+          coverage xml
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}

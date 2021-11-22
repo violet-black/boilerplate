@@ -1,0 +1,43 @@
+[tool.bandit]
+skips = ["B101", "B601", "B603"]
+
+[tool.black]
+line-length = {{ cookiecutter.line_length }}
+target-version = ['py{{ cookiecutter.minimum_python_version | replace(".", "") }}']
+
+[tool.pytest.ini_options]
+log_cli = true
+log_level = "DEBUG"
+log_format = '"%(levelname)s %(message)s"'
+log_cli_level = "DEBUG"
+log_cli_format = '"%(levelname)s %(message)s"'
+addopts = "--doctest-modules --doctest-continue-on-failure --ignore=docs/source/conf.py --ignore=conftest.py --ignore=setup.py"
+markers = ['unittest', 'docker_test', 'integration_test', 'benchmark_test']
+
+[tool.coverage.run]
+omit = ['*/tests/*', '*/fixtures.py', '*/__init__.py', '*/__main__.py', '*/docs/*', 'conftest.py', 'setup.py']
+
+[tool.coverage.report]
+skip_empty = true
+omit = ['*/tests/*', '*/fixtures.py', '*/__init__.py', '*/__main__.py', '*/docs/*', 'conftest.py', 'setup.py']
+
+[tool.isort]
+multi_line_output = 3
+lines_after_imports = 2
+skip_gitignore = true
+balanced_wrapping = true
+line_length = {{ cookiecutter.line_length }}
+wrap_length = {{ cookiecutter.line_length }}
+src_paths = ['{{ cookiecutter.project_slug }}', 'tests']
+known_first_party = ['{{ cookiecutter.project_slug }}', 'tests']
+extend_skip = ['__init__.py', '__main__.py', 'conftest.py', 'docs/source/conf.py', 'setup.py']
+
+[tool.pydocstyle]
+match = '.*\.py'
+inherit = false
+ignore = ['D100', 'D102', 'D103', 'D104', 'D105', 'D107', 'D203', 'D213']
+
+[tool.flake8]
+max-line-length = {{ cookiecutter.line_length }}
+max-doc-length = {{ cookiecutter.line_length }}
+ignore = ['F401', 'F403']
