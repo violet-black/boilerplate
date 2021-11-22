@@ -24,7 +24,8 @@ __________
 - `type` - "package" - normal package, "application" - executable
 - `minimum_python_version`
 - `maximum_python_version`
-- `python_versions` - set automatically: list of all minor python versions (used by tox)
+- `python_versions` - set automatically: list of all minor python versions
+- `line_length` - max allowed line length for code and doc lines
 - `project_name` - human-readable project name used in docs
 - `version` - initial package version
 - `project_slug` - project directory and package name in python
