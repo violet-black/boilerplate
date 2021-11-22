@@ -2,5 +2,7 @@
 !.gitignore
 !*.yaml
 !*.json
+!*.toml
 *.local.json
 *.local.yaml
+*.local.toml
