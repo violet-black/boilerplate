@@ -22,6 +22,7 @@ REMOVE_PATHS = [
 
     # remove app files if package is selected
 
+    '{% if cookiecutter.type != "application" %}etc/idea/runConfigurations/run.xml{% endif %}',
     '{% if cookiecutter.type != "application" %}data{% endif %}',
     '{% if cookiecutter.type != "application" %}settings{% endif %}',
     '{% if cookiecutter.type != "application" %}Dockerfile{% endif %}',
