@@ -1,5 +1,5 @@
 [tool.bandit]
-skips = ["B101", "B601", "B603"]
+skips = ['B101', 'B311', 'B601', 'B603']
 
 [tool.black]
 line-length = {{ cookiecutter.line_length }}
@@ -35,9 +35,9 @@ extend_skip = ['__init__.py', '__main__.py', 'conftest.py', 'docs/source/conf.py
 [tool.pydocstyle]
 match = '.*\.py'
 inherit = false
-ignore = ['D100', 'D102', 'D103', 'D104', 'D105', 'D107', 'D203', 'D213']
+ignore = ['D100', 'D102', 'D103', 'D104', 'D105', 'D107', 'D203', 'D213', 'D407', 'D412']
 
 [tool.flake8]
 max-line-length = {{ cookiecutter.line_length }}
 max-doc-length = {{ cookiecutter.line_length }}
-ignore = ['F401', 'F403']
+ignore = ['E203', 'F401', 'F403']

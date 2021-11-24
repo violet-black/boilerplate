@@ -59,7 +59,7 @@ repos:
         name: scanning for security issues
         description: https://github.com/PyCQA/bandit
         entry: bandit
-        args: [ '-s', 'B101,B601,B603' ]  # it seems that at this moment pyproject.toml is not supported
+        args: [ '-c', 'pyproject.toml' ]
         language: python
         types: [ python ]
         exclude: (conftest.py|setup.py|docs/source/conf.py)
