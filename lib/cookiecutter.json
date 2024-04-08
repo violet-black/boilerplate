@@ -1,0 +1,22 @@
+{
+  "project_name": "",
+  "description": "",
+  "author": "violetblackdev@gmail.com",
+  "email": "violetblackdev@gmail.com",
+  "license": "MIT",
+  "__project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_') }}",
+  "__package_name": "{{ cookiecutter.project_name.lower().replace(' ', '-').replace('_', '-') }}",
+  "min_version": "3.8",
+  "__min_version_tag": "{{ cookiecutter.min_version.replace('.', '') }}",
+  "max_version": "3.13",
+  "__versions": "{{ range(cookiecutter.min_version | replace('3.', '') | int, cookiecutter.max_version | replace('3.', '') | int  + 1) | join('_') }}",
+  "__vcs": "github.com",
+  "__vcs_username": "violet-black",
+  "__vcs_project": "{{ cookiecutter.__package_name }}",
+  "__url": "https://{{ cookiecutter.__vcs }}/{{ cookiecutter.__vcs_username }}/{{ cookiecutter.__package_name }}",
+  "__license": "MIT",
+  "__version": "0.1.0",
+  "_copy_without_render": [
+      "*.html"
+  ]
+}
