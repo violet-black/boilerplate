@@ -1,11 +1,10 @@
-Jsonschema-gen
---------------
+{{ cookiecutter.__package_name }}
+---------------------------------
 
 .. toctree::
    :maxdepth: 1
 
    guide
-   customization
    reference
 
 .. include:: quickstart.rst

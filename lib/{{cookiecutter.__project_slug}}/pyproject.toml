@@ -1,6 +1,6 @@
 [tool.black]
 line-length = 120
-target-version = ['{{ cookiecutter.__min_version_tag }}']
+target-version = ['py{{ cookiecutter.__min_version_tag }}']
 
 [tool.coverage.report]
 omit = ["setup.py", "conftest.py", "tests/*", "docs/*"]
@@ -25,4 +25,4 @@ load-plugins = [
     ''
 ]
 disable = ['C0103', 'C0115', 'C0116', 'R0902', 'R0903', 'R0913', 'R1705', 'W0106', 'W0603', 'W0212']
-max-line-length = 135
+max-line-length = 130
